@@ -150,7 +150,23 @@ $$
 where $\sigma = C(\eta_1, \eta_2, \eta_3) : \left( \varepsilon - \varepsilon^0(c,\eta_1, \eta_2, \eta_3)\right)$ is the stress tensor.
 
 ## Time discretization
-Using forward Euler explicit time stepping, equations $$\begin{align} \frac{\partial c}{\partial t} &= ~\nabla \cdot \left( \frac{1}{f_{,cc}}M \nabla \mu_c \right) \end{align}$$ and $$\begin{equation} \frac{\partial \eta_p}{\partial t} &= - L \mu_{\eta_p} \end{equation}$$  become:
+Using forward Euler explicit time stepping, equations 
+
+$$
+\begin{align}
+\frac{\partial c}{\partial t} &= ~\nabla \cdot \left( \frac{1}{f_{,cc}}M \nabla \mu_c \right)
+\end{align}
+$$
+
+and 
+
+$$
+\begin{align}
+\frac{\partial \eta_p}{\partial t} &= - L \mu_{\eta_p} 
+\end{align}
+$$
+
+become:
 
 $$
 \begin{align}
@@ -165,7 +181,23 @@ $$
 $$
 
 ## Weak formulation
-Writing equations \ref{CH_eqn} and \ref{AC_eqn} in the weak form, with the arbirary variation given by $w$ yields:
+Writing equations 
+
+$$
+\begin{align}
+\frac{\partial c}{\partial t} &= ~\nabla \cdot \left( \frac{1}{f_{,cc}}M \nabla \mu_c \right)
+\end{align}
+$$
+
+and 
+
+$$
+\begin{align}
+\frac{\partial \eta_p}{\partial t} &= - L \mu_{\eta_p} 
+\end{align}
+$$
+
+in the weak form, with the arbirary variation given by $w$ yields:
 
 $$
 \begin{align}
@@ -179,7 +211,53 @@ $$
 \end{align}
 $$
 
-where
+$$
+\begin{align}
+\int_\Omega w \eta_p^{n+1} dV &= \int_\Omega w \eta_p^{n}-w  \Delta t L \mu_{\eta_p} dV
+\end{align}
+$$
+
+The expression of $\frac{1}{f_{,cc}} \mu_c$ can be written as:
+
+$$
+\begin{align}
+\frac{1}{f_{,cc}}  \nabla \mu_c = & \nabla c + (c_{\alpha}-c_{\beta}) \sum_{p=1}^3 H(\eta_p)_{,\eta_p} \nabla \eta_p 
+\end{align}
+$$
+
+$$
+\begin{align}
+&+ \frac{1}{f_{,cc}} \left(\sum_{p=1}^3 (C_{ijkl}^{\eta_p} - C_{ijkl}^{\alpha} )\nabla \eta_p H_{,\eta_p}(\eta_p) \right)(-\epsilon_{ij,c}^0)(\epsilon_{ij} - \epsilon_{ij}^0)
+\end{align}
+$$
+
+$$
+\begin{align}
+&- \frac{1}{f_{,cc}} C_{ijkl} \left(  \sum_{p=1}^3 \left( H_{,\eta_p}(\eta_p) \epsilon_{ij,c}^{0\eta_p} + \sum_{q=1}^3 \left( H(\eta_p) \epsilon_{ij,c\eta_q}^{0\eta_p} \right) \right) \nabla \eta_p + H(\eta_p) \epsilon_{ij,cc}^{0\eta_p} \nabla c \right)(\epsilon_{kl}-\epsilon_{kl}^0)
+\end{align}
+$$
+
+$$
+\begin{align}
+&+ \frac{1}{f_{,cc}} C_{ijkl} (-\epsilon_{ij,c}^0) \left( \nabla \epsilon_{kl} -  \left( \sum_{p=1}^3 \left(H_{,\eta_p}(\eta_p) \epsilon_{kl}^{0\eta_p} -\sum_{q=1}^3 \epsilon_{kl,\eta_q}^{\eta_q} H(\eta_q) \right)\nabla \eta_p + H(\eta_p) \epsilon_{kl,c}^{0\eta_p} \nabla c \right) \right)
+\end{align}
+$$
+
+Applying the divergence theorem to equation
+
+$$
+\begin{align}
+\int_\Omega w c^{n+1} dV &= \int_\Omega wc^{n}+w  \Delta t \left[\nabla \cdot \left(\frac{1}{f_{,cc}}  M \nabla \mu_c \right) \right] dV
+\end{align}
+$$
+
+one can derive the residual terms $r_c$ and $r_{cx}$:
+
+$$
+\begin{equation}
+\int_\Omega w c^{n+1} dV = \int_\Omega wc^{n} +\nabla w \cdot (-\Delta t  M \frac{1}{f_{,cc}} \nabla \mu_c) dV
+\end{equation}
+$$
 
 $$
 \begin{align}
@@ -189,9 +267,11 @@ $$
 
 $$
 \begin{align}
-r_{cx} &= \Delta t  M \nabla \mu_c
+r_{cx} &= -\Delta t  M \frac{1}{f_{,cc}} \nabla \mu_c
 \end{align}
 $$
+
+Expanding $\mu_{\eta_p}$ in equation 
 
 $$
 \begin{align}
@@ -199,44 +279,34 @@ $$
 \end{align}
 $$
 
+and applying the divergence theorem yields the residual terms $r_{\eta_p}$ and $r_{\eta_p x}$:
+
 $$
 \begin{align}
-%&= \int_\Omega w\underbrace{c^{n}}_{r_c}+\nabla w \cdot (\underbrace{\Delta t  M \nabla \mu_c}_{r_{cx}} ) dV 
+\int_\Omega w \eta_p^{n+1} dV &=
 \end{align}
 $$
 
-The expression of $\frac{1}{f_{,cc}} \mu_c$ can be written as:
-
 $$
-\begin{equation}
-\begin{split}
-\frac{1}{f_{,cc}}  \nabla \mu_c = & \nabla c + (c_{\alpha}-c_{\beta}) \sum_{p=1}^3 H(\eta_p)_{,\eta_p} \nabla \eta_p  \\
-&+ \frac{1}{f_{,cc}} \left[ \sum_{p=1}^3 (C_{ijkl}^{\eta_p} - C_{ijkl}^{\alpha} )\nabla \eta_p H(\eta_p)_{,\eta_p} \right](-\epsilon_{ij,c}^0)(\epsilon_{ij} - \epsilon_{ij}^0) \\
-&- \frac{1}{f_{,cc}} C_{ijkl} \left[  \sum_{p=1}^3 \left( H(\eta_p)_{,\eta_p} \epsilon_{ij,c}^{0\eta_p} + \sum_{q=1}^3 \left( H(\eta_p) \epsilon_{ij,c\eta_q}^{0\eta_p} \right) \right) \nabla \eta_p + H(\eta_p) \epsilon_{ij,cc}^{0\eta_p} \nabla c \right](\epsilon_{kl}-\epsilon_{kl}^0)\\
-&+ \frac{1}{f_{,cc}} C_{ijkl} (-\epsilon_{ij,c}^0) \left[ \nabla \epsilon_{kl} -  \left( \sum_{p=1}^3 \left(H(\eta_p)_{,\eta_p} \epsilon_{kl}^{0\eta_p} -\sum_{q=1}^3 \epsilon_{kl,\eta_q}^{\eta_q} H(\eta_q) \right)\nabla \eta_p + H(\eta_p) \epsilon_{kl,c}^{0\eta_p} \nabla c \right) \right]
-\end{split}
-\end{equation}
+\begin{align}
+&\int_\Omega w \left(\eta_p^{n}-\Delta t L \left( (f_{\beta}-f_{\alpha})H_{,\eta_p}(\eta_p^n) -(c_{\beta}-c_{\alpha}) f_{\beta,c_{\beta}}H_{,\eta_p}(\eta_p^n) + W f_{Landau,\eta_p}
+-C_{ijkl}  (H_{,\eta_p}(\eta_p) \epsilon_{ij}^{0 \eta_p}) (\epsilon_{kl} - \epsilon_{kl}^{0}) + \frac{1}{2} \left((C_{ijkl}^{\eta_p} - C_{ijkl}^{\alpha}) H_{,\eta_p}(\eta_p) \right) (\epsilon_{ij} - \epsilon_{ij}^{0}) (\epsilon_{kl} - \epsilon_{kl}^{0}) \right) \right) &+ \nabla w \cdot \left(-\Delta t  L \kappa_{ij}^{\eta_p} \eta_{p,i}^n \right) dV 
+\end{align}
 $$
 
-Applying the divergence theorem to equation \ref{CH_weak}, one can derive the residual terms $r_c$ and $r_{cx}$:
+where 
 
 $$
-\begin{equation}
-\int_\Omega w c^{n+1} dV = \int_\Omega w\underbrace{c^{n}}_{r_c}+\nabla w \cdot (\underbrace{-\Delta t  M \frac{1}{f_{,cc}} \nabla \mu_c}_{r_{cx}} ) dV
-\end{equation}
+\begin{align}
+r_{\eta_p} &= \eta_p^{n}-\Delta t L \left( (f_{\beta}-f_{\alpha})H_{,\eta_p}(\eta_p^n) -(c_{\beta}-c_{\alpha}) f_{\beta,c_{\beta}}H_{,\eta_p}(\eta_p^n) + W f_{Landau,\eta_p}
+-C_{ijkl}  (H_{,\eta_p}(\eta_p) \epsilon_{ij}^{0 \eta_p}) (\epsilon_{kl} - \epsilon_{kl}^{0}) + \frac{1}{2} \left((C_{ijkl}^{\eta_p} - C_{ijkl}^{\alpha}) H_{,\eta_p}(\eta_p) \right) (\epsilon_{ij} - \epsilon_{ij}^{0}) (\epsilon_{kl} - \epsilon_{kl}^{0}) \right)
+\end{align}
 $$
 
-Expanding $\mu_{\eta_p}$ in equation \ref{AC_weak} and applying the divergence theorem yields the residual terms $r_{\eta_p}$ and $r_{\eta_p x}$:
-
 $$
-\begin{equation}
-\begin{split}
-\int_\Omega w \eta_p^{n+1} dV &= \\
-&\int_\Omega w \Bigg\{\underbrace{\eta_p^{n}-\Delta t L \bigg[(f_{\beta}-f_{\alpha})H(\eta_p^n)_{,\eta_p} -(c_{\beta}-c_{\alpha}) f_{\beta,c_{\beta}}H(\eta_p^n)_{,\eta_p} + W f_{Landau,\eta_p}}_{r_{\eta_p}}  \\ 
-&\underbrace{ -C_{ijkl} \left( H(\eta_p)_{,\eta_p} \epsilon_{ij}^{0 \eta_p}\right)\left(\epsilon_{kl} - \epsilon_{kl}^{0} \right) + \frac{1}{2} \left[ (C_{ijkl}^{\eta_p} - C_{ijkl}^{\alpha}) H(\eta_p)_{,\eta_p} \right] \left(\epsilon_{ij} - \epsilon_{ij}^{0} \right) \left(\epsilon_{kl} - \epsilon_{kl}^{0} \right) \bigg] }_{r_{\eta_p}~cont.} \Bigg\} \\
-&+ \nabla w \cdot (\underbrace{-\Delta t  L \Bkappa^{\eta_p}_{ij} \eta_{p,i}^n}_{r_{\eta_p x}} ) dV 
-\end{split}
-\end{equation}
+\begin{align}
+r_{\eta_p x} &= -\Delta t  L \kappa_{ij}^{\eta_p} \eta_{p,i}^n
+\end{align}
 $$
 
 ## Appendix I: Example functions for $f_{\alpha}$, $f_{\beta}$, $f_{Landau}$, $H(\eta_p)$ 
